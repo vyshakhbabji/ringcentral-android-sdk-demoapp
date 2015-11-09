@@ -58,6 +58,7 @@ public class AuthActivity extends ActionBarActivity implements View.OnClickListe
 
                 String appKey = editText4.getText().toString();
                 String appSecret = editText5.getText().toString();
+                sdk = new SDK("E0_nOAfbR7GkteYbDv93oA", "UelNnk-1QYK0rHyvjJJ9yQx3Yl6vj3RvGmb0G2SH6ePw", Platform.Server.SANDBOX);
                 helpers = sdk.platform();
                 String username = editText1.getText().toString();
                 String extension = editText2.getText().toString();
