@@ -37,7 +37,7 @@ import platform.Platform;
 public class CallLogActivity extends ActionBarActivity {
 
     SDK sdk;
-    Platform helpers;
+    Platform helpers=Singleton.getInstance().getPlatform();
     //Subscription subscription;
     TextView textView1;
     TableLayout tableLayout;
@@ -50,8 +50,8 @@ public class CallLogActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call_log);
         Intent intent = getIntent();
-        sdk = (SDK) intent.getSerializableExtra("MyRcsdk");
-        helpers = sdk.platform();
+      //  sdk = (SDK) intent.getSerializableExtra("MyRcsdk");
+        //helpers = (Platform) intent.getSerializableExtra("MyRcsdk");//sdk.platform();
        // subscription = helpers.getSubscription();
         textView1 = (TextView) findViewById(R.id.textView1);
         tableLayout = (TableLayout) findViewById(R.id.tableLayout);

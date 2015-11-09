@@ -18,15 +18,18 @@ public class OptionsActivity extends ActionBarActivity implements View.OnClickLi
 
     Button button1, button2, button3, button4;
     SDK sdk;
-    Platform helpers;
+    Platform helpers= Singleton.getInstance().getPlatform();
+    String accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
         Intent intent = getIntent();
-        sdk = (SDK) intent.getSerializableExtra("MyRcsdk");
-        helpers = sdk.platform();
+//        sdk = (SDK) intent.getSerializableExtra("MyRcsdk");
+//        helpers = sdk.platform();
+//        helpers = (Platform) intent.getSerializableExtra("MyRcsdk");
+
         button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(this);
         button2 = (Button) findViewById(R.id.button2);
@@ -44,25 +47,25 @@ public class OptionsActivity extends ActionBarActivity implements View.OnClickLi
 
             case R.id.button1:
                 Intent optionsIntent = new Intent(OptionsActivity.this, CallStatusActivity.class);
-                optionsIntent.putExtra("MyRcsdk", sdk);
+               // optionsIntent.putExtra("MyRcsdk", accessToken);
                 startActivity(optionsIntent);
                 break;
 
             case R.id.button2:
                 Intent logIntent = new Intent(OptionsActivity.this, CallLogActivity.class);
-                logIntent.putExtra("MyRcsdk", sdk);
+                logIntent.putExtra("MyRcsdk", accessToken);
                 startActivity(logIntent);
                 break;
 
             case R.id.button3:
                 Intent smsIntent = new Intent(OptionsActivity.this, SMSActivity.class);
-                smsIntent.putExtra("MyRcsdk", sdk);
+                smsIntent.putExtra("MyRcsdk", accessToken);
                 startActivity(smsIntent);
                 break;
 
             case R.id.button4:
                 Intent ringoutIntent = new Intent(OptionsActivity.this, RingOutActivity.class);
-                ringoutIntent.putExtra("MyRcsdk", sdk);
+                ringoutIntent.putExtra("MyRcsdk", accessToken);
                 startActivity(ringoutIntent);
                 break;
         }
