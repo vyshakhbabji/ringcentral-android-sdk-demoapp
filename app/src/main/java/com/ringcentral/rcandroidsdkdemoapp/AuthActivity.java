@@ -79,7 +79,9 @@ public class AuthActivity extends ActionBarActivity implements View.OnClickListe
                                 helpers.setAuth(transaction.response());
                                 // Display options Activity
                                 Intent optionsIntent = new Intent(AuthActivity.this, OptionsActivity.class);
-                                optionsIntent.putExtra("MyRcsdk", sdk);
+                             //  optionsIntent.putExtra("accessToken", helpers.getAccessToken());
+
+                                Singleton.getInstance().setPlatform(helpers);
                                 startActivity(optionsIntent);
                             }
                         });
