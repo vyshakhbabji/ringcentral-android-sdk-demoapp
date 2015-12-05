@@ -2,8 +2,8 @@ package com.ringcentral.rcandroidsdkdemoapp;
 
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,13 +11,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+import com.ringcentral.rc_android_sdk.rcsdk.core.SDK;
+import com.ringcentral.rc_android_sdk.rcsdk.platform.Platform;
 
-
-import core.SDK;
-import platform.Platform;
-
-
-public class RingOutActivity extends ActionBarActivity implements View.OnClickListener{
+public class RingOutActivity extends ActionBarActivity implements View.OnClickListener {
 
 
     SDK sdk;
@@ -47,7 +44,7 @@ public class RingOutActivity extends ActionBarActivity implements View.OnClickLi
         checkPrompt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(((CheckBox) v).isChecked()) {
+                if (((CheckBox) v).isChecked()) {
                     hasPrompt = "true";
                 }
             }

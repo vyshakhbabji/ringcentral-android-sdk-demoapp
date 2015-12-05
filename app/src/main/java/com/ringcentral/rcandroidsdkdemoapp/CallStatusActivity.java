@@ -1,37 +1,15 @@
 package com.ringcentral.rcandroidsdkdemoapp;
 
 //
-//import android.content.Intent;
-//import android.graphics.Color;
-//import android.os.Bundle;
-//import android.os.Handler;
-//import android.os.Message;
+
 import android.support.v7.app.ActionBarActivity;
-//import android.view.Menu;
-//import android.view.MenuItem;
-//import android.widget.RelativeLayout;
-//import android.widget.TextView;
-//
-//import com.pubnub.api.PubnubError;
-//import com.ringcentral.rc_android_sdk.rcsdk.SDK;
-//import com.ringcentral.rc_android_sdk.rcsdk.http.Transaction;
-//import com.ringcentral.rc_android_sdk.rcsdk.platform.Helpers;
-//import com.ringcentral.rc_android_sdk.rcsdk.subscription.Subscription;
-//import com.squareup.okhttp.Callback;
-//import com.squareup.okhttp.Request;
-//import com.squareup.okhttp.Response;
-//
-//import org.json.JSONException;
-//import org.json.JSONObject;
-//
-//import java.io.IOException;
 
 
 public class CallStatusActivity extends ActionBarActivity {
 
 //    SDK sdk;
-//    Helpers helpers;
-//    Subscription subscription;
+//    Platform helpers;
+//
 //    TextView textView1;
 //
 //    @Override
@@ -39,11 +17,29 @@ public class CallStatusActivity extends ActionBarActivity {
 //        super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_call_status);
 //        Intent intent = getIntent();
-//        sdk = (SDK) intent.getSerializableExtra("MyRcsdk");
-//        helpers = sdk.getHelpers();
+//       // sdk = (SDK) intent.getSerializableExtra("MyRcsdk");
+//        helpers = Singleton.getInstance().getPlatform();
+//        Subscription subscription= new Subscription(helpers);
+//        String payload = "{\r\n  \"eventFilters\": [ \r\n    \"/restapi/v1.0/account/~/extension/~/presence\", \r\n    \"/restapi/v1.0/account/~/extension/~/message-store\" \r\n  ], \r\n  \"deliveryMode\": { \r\n    \"transportType\": \"PubNub\", \r\n    \"encryption\": \"false\" \r\n  } \r\n}";
+//
+//		subscription.deliveryMode.transportType="PubNub";
+//		subscription.deliveryMode.encryption=false;
+//		MediaType mediaType = Platform.ContentTypeSelection.JSON_TYPE_MARKDOWN.value;
+//		RequestBody body = RequestBody.create(mediaType, payload.getBytes());
+//		APIResponse response = helpers.sendRequest("post", "/restapi/v1.0/subscription",
+//				body, null);
+//		String s = response.json();
+////		System.out.println(s);
+//		JSONObject jResponse = new JSONObject(s);
+//
+//
+//
+//
+//
+//
 //        subscription = helpers.getSubscription();
 //        textView1 = (TextView) findViewById(R.id.textView1);
-//        helpers.subscribe(
+//        subscription.subscribe(
 //                new Callback() {
 //                    @Override
 //                    public void onFailure(Request request, IOException e) {

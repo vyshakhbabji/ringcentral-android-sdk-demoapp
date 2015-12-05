@@ -1,6 +1,6 @@
 package com.ringcentral.rcandroidsdkdemoapp;
 
-import platform.Platform;
+import com.ringcentral.rc_android_sdk.rcsdk.platform.Platform;
 
 /**
  * Created by vyshakh.babji on 11/9/15.
@@ -8,6 +8,18 @@ import platform.Platform;
 public class Singleton {
 
     private static Singleton ourInstance = null;
+    Platform platform;
+
+    private Singleton() {
+    }
+
+    public static Singleton getInstance() {
+
+        if (ourInstance == null)
+            ourInstance = new Singleton();
+
+        return ourInstance;
+    }
 
     public Platform getPlatform() {
         return platform;
@@ -15,19 +27,6 @@ public class Singleton {
 
     public void setPlatform(Platform platform) {
         this.platform = platform;
-    }
-
-    Platform platform;
-
-    public static Singleton getInstance() {
-
-        if(ourInstance==null)
-            ourInstance= new Singleton();
-
-        return ourInstance;
-    }
-
-    private Singleton() {
     }
 
 

@@ -2,9 +2,9 @@ package com.ringcentral.rcandroidsdkdemoapp;
 
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,18 +12,15 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-
-import http.APIResponse;
-
-
+import com.ringcentral.rc_android_sdk.rcsdk.http.APIResponse;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
-import core.SDK;
-import platform.Platform;
+import com.ringcentral.rc_android_sdk.rcsdk.core.SDK;
+import com.ringcentral.rc_android_sdk.rcsdk.platform.Platform;
 
 
 public class AuthActivity extends ActionBarActivity implements View.OnClickListener {
@@ -35,15 +32,17 @@ public class AuthActivity extends ActionBarActivity implements View.OnClickListe
     CheckBox checkPrompt;
     String hasPrompt = "SANDBOX";
 
+    int i = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
-        editText1 = (EditText)findViewById(R.id.editText1);
-        editText2 = (EditText)findViewById(R.id.editText2);
-        editText3 = (EditText)findViewById(R.id.editText3);
-        editText4 = (EditText)findViewById(R.id.editText4);
-        editText5 = (EditText)findViewById(R.id.editText5);
+        editText1 = (EditText) findViewById(R.id.editText1);
+        editText2 = (EditText) findViewById(R.id.editText2);
+        editText3 = (EditText) findViewById(R.id.editText3);
+        editText4 = (EditText) findViewById(R.id.editText4);
+        editText5 = (EditText) findViewById(R.id.editText5);
         button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(this);
         addListenerOnCheckBox();
@@ -54,38 +53,45 @@ public class AuthActivity extends ActionBarActivity implements View.OnClickListe
 
         switch (v.getId()) {
 
-            case R.id.button1:
+            case R.id.button1: {
 
                 String appKey = editText4.getText().toString();
                 String appSecret = editText5.getText().toString();
+
+
+
+                sdk=new SDK("","", Platform.Server.PRODUCTION);
                 helpers = sdk.platform();
                 String username = editText1.getText().toString();
                 String extension = editText2.getText().toString();
                 String password = editText3.getText().toString();
-                helpers.login("15856234138", "101", "P@ssw0rd",
-                        new Callback() {
-                            @Override
-                            public void onFailure(Request request, IOException e) {
-                                e.printStackTrace();
-                            }
+                helpers.login("", "", "", new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        e.printStackTrace();
+                    }
 
-                            @Override
-                            public void onResponse(Response response) throws IOException {
-                                APIResponse transaction = new APIResponse(response);
-                                // If HTTP response is not successful, throw exception
-                                //if (!response.isSuccessful())
+                    @Override
+                    public void onResponse(Response response) throws IOException {
+                        try {
 
-                                // Create RCResponse and parse the JSON response to set Auth data
-                                helpers.setAuth(transaction.response());
-                                // Display options Activity
-                                Intent optionsIntent = new Intent(AuthActivity.this, OptionsActivity.class);
-                             //  optionsIntent.putExtra("accessToken", helpers.getAccessToken());
+                            Log.v("onResponse AuthActivity",String.valueOf(response.isSuccessful()));
+                            if (response.isSuccessful() && helpers.loggedIn()) {
 
                                 Singleton.getInstance().setPlatform(helpers);
+                                Intent optionsIntent = new Intent(AuthActivity.this, OptionsActivity.class);
                                 startActivity(optionsIntent);
                             }
-                        });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+           //     boolean b = helpers.loggedIn();
+
                 break;
+            }
         }
     }
 
@@ -94,14 +100,17 @@ public class AuthActivity extends ActionBarActivity implements View.OnClickListe
         checkPrompt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(((CheckBox) v).isChecked()) {
+                if (((CheckBox) v).isChecked()) {
                     hasPrompt = "PRODUCTION";
-                }else{
+                } else {
                     hasPrompt = "SANDBOX";
                 }
             }
         });
     }
+
+
+
 
 
     @Override

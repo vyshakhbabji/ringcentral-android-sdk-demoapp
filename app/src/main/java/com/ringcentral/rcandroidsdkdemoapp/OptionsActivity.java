@@ -2,23 +2,22 @@ package com.ringcentral.rcandroidsdkdemoapp;
 
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.ringcentral.rc_android_sdk.rcsdk.core.SDK;
+import com.ringcentral.rc_android_sdk.rcsdk.platform.Platform;
 
-import core.SDK;
-import platform.Platform;
 
-
-public class OptionsActivity extends ActionBarActivity implements View.OnClickListener{
+public class OptionsActivity extends ActionBarActivity implements View.OnClickListener {
 
     Button button1, button2, button3, button4;
     SDK sdk;
-    Platform helpers= Singleton.getInstance().getPlatform();
+    Platform helpers = Singleton.getInstance().getPlatform();
     String accessToken;
 
     @Override
@@ -47,7 +46,7 @@ public class OptionsActivity extends ActionBarActivity implements View.OnClickLi
 
             case R.id.button1:
                 Intent optionsIntent = new Intent(OptionsActivity.this, CallStatusActivity.class);
-               // optionsIntent.putExtra("MyRcsdk", accessToken);
+                // optionsIntent.putExtra("MyRcsdk", accessToken);
                 startActivity(optionsIntent);
                 break;
 
@@ -70,7 +69,6 @@ public class OptionsActivity extends ActionBarActivity implements View.OnClickLi
                 break;
         }
     }
-
 
 
     @Override
