@@ -123,6 +123,21 @@ public class CallLogActivity extends ActionBarActivity {
 
         Helpers helper = new Helpers(helpers);
 
+        helpers.refresh(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                    Log.v("ref1",String.valueOf(response.code()));
+            }
+        });
+
+
+        Log.v("Ensure auth",String.valueOf(helpers.ensureAuthentication()));
+
          helper.callLog(
                  new Callback() {
                      @Override
@@ -133,6 +148,7 @@ public class CallLogActivity extends ActionBarActivity {
 
                      @Override
                      public void onResponse(Response response) throws IOException {
+
 
                          Log.v("onResponse AuthActivity", String.valueOf(response.isSuccessful()));
                          Log.v("onResponse AuthActivity", String.valueOf(response.code()));
@@ -172,6 +188,28 @@ public class CallLogActivity extends ActionBarActivity {
 
                      }
                  });
+
+
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//
+//        }
+
+        helpers.refresh(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                Log.v("ref3", String.valueOf(response.code()));
+                Log.v("ref3", String.valueOf(response.message()));
+//                Log.v("ref3", String.valueOf));
+            }
+        });
 
 
 
