@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.ringcentral.rc_android_sdk.rcsdk.core.SDK;
+import com.ringcentral.rc_android_sdk.rcsdk.http.APICallback;
+import com.ringcentral.rc_android_sdk.rcsdk.http.APIResponse;
 import com.ringcentral.rc_android_sdk.rcsdk.platform.Platform;
 import com.ringcentral.rc_android_sdk.rcsdk.utils.Helpers;
 import com.squareup.okhttp.Callback;
@@ -37,7 +39,6 @@ public class SMSActivity extends
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sms);
         Intent intent = getIntent();
-
         helpers = new Helpers(getInstance().getPlatform());
         button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(this);
@@ -48,33 +49,28 @@ public class SMSActivity extends
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
-
             case R.id.button1:
                 String to = toText.getText().toString();
                 String from = fromText.getText().toString();
                 String message = smsText.getText().toString().replace("\n", "");
                 helpers.sendSMS(to, from, message,
-                        new Callback() {
-                            @Override
-                            public void onFailure(Request request, IOException e) {
+                        new APICallback() {
+
+                            public void onAPIFailure(Request request, IOException e) {
                                 e.printStackTrace();
                             }
 
-                            @Override
-                            public void onResponse(Response response) throws IOException {
 
-
+                            public void onAPIResponse(APIResponse response) throws IOException {
                                 // If HTTP response is not successful, throw exception
-                                if (!response.isSuccessful()) {
+                                if (!response.ok()) {
                                     String resp = response.body().string();
                                     try {
-
                                         JSONObject jsonObject = new JSONObject(resp);
                                         String errorCode = jsonObject.getString("errorCode");
                                         String message = jsonObject.getString("message");
-                                        throw new IOException("Error code: " + response.code() + ". Error: " + errorCode + ": " + message);
+                                        throw new IOException("Error code: " + response.statusCode() + ". Error: " + errorCode + ": " + message);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -99,12 +95,10 @@ public class SMSActivity extends
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

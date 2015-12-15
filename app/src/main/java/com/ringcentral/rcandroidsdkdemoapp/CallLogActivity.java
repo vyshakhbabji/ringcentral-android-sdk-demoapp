@@ -15,11 +15,14 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.ringcentral.rc_android_sdk.rcsdk.http.APICallback;
 import com.ringcentral.rc_android_sdk.rcsdk.http.APIResponse;
+import com.ringcentral.rc_android_sdk.rcsdk.platform.AuthException;
+import com.ringcentral.rc_android_sdk.rcsdk.subscription.Subscription;
 import com.ringcentral.rc_android_sdk.rcsdk.utils.Helpers;
-import com.squareup.okhttp.Callback;
+//import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+//import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -81,28 +84,6 @@ public class CallLogActivity extends ActionBarActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call_log);
-        Intent intent = getIntent();
-        // Log.v("access token ", String.valueOf(helpers.auth().accessTokenValid()));
-        //  sdk = (SDK) intent.getSerializableExtra("MyRcsdk");
-        //helpers = (Platform) intent.getSerializableExtra("MyRcsdk");//sdk.platform();
-        // subscription = helpers.getSubscription();
-
-
-//        helpers.sendRequest("get", "/restapi/v1.0/account/~/call-log", null, null, new Callback() {
-//            @Override
-//            public void onFailure(Request request, IOException e) {
-//
-//            }
-//
-//            @Override
-//            public void onResponse(Response response) throws IOException {
-//
-//            }
-//        }).;
-
-
-
-
 
         textView1 = (TextView) findViewById(R.id.textView1);
         tableLayout = (TableLayout) findViewById(R.id.tableLayout);
@@ -121,51 +102,33 @@ public class CallLogActivity extends ActionBarActivity {
         textView1.setText("To:");
           Log.v("access token ", String.valueOf(helpers.auth().accessTokenValid()));
 
-        Helpers helper = new Helpers(helpers);
+        final Helpers helper = new Helpers(helpers);
 
-        helpers.refresh(new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
+        helper.callLog(
+                new APICallback() {
+                    @Override
+                    public void onAPIFailure(Request request, IOException e) {
+                        Log.v("Failed", request.method());
+                    }
 
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                    Log.v("ref1",String.valueOf(response.code()));
-            }
-        });
-
-
-        Log.v("Ensure auth",String.valueOf(helpers.ensureAuthentication()));
-
-         helper.callLog(
-                 new Callback() {
-                     @Override
-                     public void onFailure(Request request, IOException e) {
-                         e.printStackTrace();
-                     }
-
-
-                     @Override
-                     public void onResponse(Response response) throws IOException {
-
-
-                         Log.v("onResponse AuthActivity", String.valueOf(response.isSuccessful()));
-                         Log.v("onResponse AuthActivity", String.valueOf(response.code()));
-
-                         String responseString = "";
-                         String body = response.body().string();
-                         HashMap<String, String> map = new HashMap<String, String>();
-                         try {
-                             JSONObject jsonObject = new JSONObject(body);
-                             JSONArray records = jsonObject.getJSONArray("records");
-                             for (int i = 0; i < records.length(); i++) {
-                                 JSONObject record = records.getJSONObject(i);
-                                 JSONObject to = record.getJSONObject("to");
-                                 JSONObject from = record.getJSONObject("from");
-                                 map.put("to", to.getString("phoneNumber"));
-                                 String time = record.getString("startTime").substring(11, 19);
-                                 map.put("time", time);
+                    public void onAPIResponse(APIResponse response) throws IOException {
+                        Log.v("onResponse CallActivity", String.valueOf(response.ok()));
+                        Log.v("onResponse CallActivity", String.valueOf(response.ok()));
+                        String body = response.body().string();
+                        Log.v("call-log response",body);
+                        String responseString = "";
+                        if (response != null && response.ok()) {
+                            HashMap<String, String> map = new HashMap<String, String>();
+                            try {
+                                JSONObject jsonObject = new JSONObject(body);
+                                JSONArray records = jsonObject.getJSONArray("records");
+                                for (int i = 0; i < records.length(); i++) {
+                                    JSONObject record = records.getJSONObject(i);
+                                    JSONObject to = record.getJSONObject("to");
+                                    JSONObject from = record.getJSONObject("from");
+                                    map.put("to", to.getString("phoneNumber"));
+                                    String time = record.getString("startTime").substring(11, 19);
+                                    map.put("time", time);
 //                                if(to.getString("location")!=null || !to.getString("location").equals(""))
 //                                map.put("location", to.getString("location"));
 //                                responseString += "To: " + to.getString("phoneNumber") + "                                       ";
@@ -174,45 +137,18 @@ public class CallLogActivity extends ActionBarActivity {
 //                                JSONObject from = record.getJSONObject("from");
 //                                responseString += "From: " + from.getString("phoneNumber") + " ";
 //                                responseString += "\n\n";
-
-                                 Message msg = handler.obtainMessage();
-                                 msg.what = 1;
-                                 msg.obj = map;
-                                 handler.sendMessage(msg);
-                             }
-
-                         } catch (JSONException e) {
-                             e.printStackTrace();
-                         }
-
-
-                     }
-                 });
-
-
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//
-//        }
-
-        helpers.refresh(new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                Log.v("ref3", String.valueOf(response.code()));
-                Log.v("ref3", String.valueOf(response.message()));
-//                Log.v("ref3", String.valueOf));
-            }
-        });
-
-
-
+                                    Message msg = handler.obtainMessage();
+                                    msg.what = 1;
+                                    msg.obj = map;
+                                    handler.sendMessage(msg);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+        Intent intent = getIntent();
     }
 
     @Override
@@ -228,12 +164,10 @@ public class CallLogActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

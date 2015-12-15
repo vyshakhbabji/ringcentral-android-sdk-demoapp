@@ -25,9 +25,6 @@ public class OptionsActivity extends ActionBarActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
         Intent intent = getIntent();
-//        sdk = (SDK) intent.getSerializableExtra("MyRcsdk");
-//        helpers = sdk.platform();
-//        helpers = (Platform) intent.getSerializableExtra("MyRcsdk");
 
         button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(this);
@@ -41,30 +38,24 @@ public class OptionsActivity extends ActionBarActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
-
             case R.id.button1:
                 Intent optionsIntent = new Intent(OptionsActivity.this, CallStatusActivity.class);
-                // optionsIntent.putExtra("MyRcsdk", accessToken);
                 startActivity(optionsIntent);
                 break;
 
             case R.id.button2:
                 Intent logIntent = new Intent(OptionsActivity.this, CallLogActivity.class);
-                logIntent.putExtra("MyRcsdk", accessToken);
                 startActivity(logIntent);
                 break;
 
             case R.id.button3:
                 Intent smsIntent = new Intent(OptionsActivity.this, SMSActivity.class);
-                smsIntent.putExtra("MyRcsdk", accessToken);
                 startActivity(smsIntent);
                 break;
 
             case R.id.button4:
                 Intent ringoutIntent = new Intent(OptionsActivity.this, RingOutActivity.class);
-                ringoutIntent.putExtra("MyRcsdk", accessToken);
                 startActivity(ringoutIntent);
                 break;
         }
@@ -84,12 +75,10 @@ public class OptionsActivity extends ActionBarActivity implements View.OnClickLi
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

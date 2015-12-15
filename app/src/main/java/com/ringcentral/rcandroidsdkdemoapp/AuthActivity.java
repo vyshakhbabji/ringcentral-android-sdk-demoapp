@@ -12,10 +12,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+import com.ringcentral.rc_android_sdk.rcsdk.http.APICallback;
 import com.ringcentral.rc_android_sdk.rcsdk.http.APIResponse;
-import com.squareup.okhttp.Callback;
+import com.ringcentral.rc_android_sdk.rcsdk.platform.AuthException;
+//import com.squareup.okhttp.Callback;
+import com.ringcentral.rc_android_sdk.rcsdk.utils.Helpers;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+//import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
@@ -50,46 +53,39 @@ public class AuthActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
-
             case R.id.button1: {
-
                 String appKey = editText4.getText().toString();
                 String appSecret = editText5.getText().toString();
                 sdk = new SDK("E0_nOAfbR7GkteYbDv93oA", "UelNnk-1QYK0rHyvjJJ9yQx3Yl6vj3RvGmb0G2SH6ePw", Platform.Server.SANDBOX);
-
-
-
                 helpers = sdk.platform();
                 String username = editText1.getText().toString();
                 String extension = editText2.getText().toString();
                 String password = editText3.getText().toString();
-                helpers.login("15856234138", "101", "P@ssw0rd", new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    helpers.login("15856234138", "101", "P@ssw0rd", new APICallback() {
 
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        try {
-
-                            Log.v("onResponse AuthActivity",String.valueOf(response.isSuccessful()));
-                            if (response.isSuccessful() && helpers.loggedIn()) {
-
-                                Singleton.getInstance().setPlatform(helpers);
-                                Intent optionsIntent = new Intent(AuthActivity.this, OptionsActivity.class);
-                                startActivity(optionsIntent);
-                            }
-                        } catch (Exception e) {
+                        public void onAPIFailure(Request request, IOException e) {
+                            Log.v("Login Failed","Failed");
                             e.printStackTrace();
                         }
-                    }
-                });
 
-           //     boolean b = helpers.loggedIn();
-
+                        public void onAPIResponse(APIResponse response) throws IOException {
+                            try {
+                                Log.v("onResponse AuthActivity",String.valueOf(response.ok()));
+                                if (response.ok() && helpers.loggedIn()) {
+                                    Singleton.getInstance().setPlatform(helpers);
+                                    Intent optionsIntent = new Intent(AuthActivity.this, OptionsActivity.class);
+                                    startActivity(optionsIntent);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } catch (AuthException e) {
+                    e.printStackTrace();
+                }
                 break;
             }
         }
@@ -109,10 +105,6 @@ public class AuthActivity extends ActionBarActivity implements View.OnClickListe
         });
     }
 
-
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -126,12 +118,10 @@ public class AuthActivity extends ActionBarActivity implements View.OnClickListe
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

@@ -12,17 +12,31 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.ringcentral.rc_android_sdk.rcsdk.core.SDK;
+import com.ringcentral.rc_android_sdk.rcsdk.http.APICallback;
+import com.ringcentral.rc_android_sdk.rcsdk.http.APIResponse;
 import com.ringcentral.rc_android_sdk.rcsdk.platform.Platform;
+import com.ringcentral.rc_android_sdk.rcsdk.utils.Helpers;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import static com.ringcentral.rcandroidsdkdemoapp.Singleton.*;
 
 public class RingOutActivity extends ActionBarActivity implements View.OnClickListener {
 
 
     SDK sdk;
-    Platform helpers;
+
     EditText fromText, toText, callerIDText;
     CheckBox checkPrompt;
     String hasPrompt = "false";
     Button button1;
+   Helpers helpers = new Helpers(getInstance().getPlatform());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +44,7 @@ public class RingOutActivity extends ActionBarActivity implements View.OnClickLi
         setContentView(R.layout.activity_ring_out);
         Intent intent = getIntent();
         sdk = (SDK) intent.getSerializableExtra("MyRcsdk");
-        helpers = sdk.platform();
+        Helpers helpers = new Helpers(getInstance().getPlatform());
         addListenerOnCheckBox();
         button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(this);
@@ -60,30 +74,29 @@ public class RingOutActivity extends ActionBarActivity implements View.OnClickLi
                 String to = toText.getText().toString();
                 String from = fromText.getText().toString();
                 String callerId = callerIDText.getText().toString();
-//                helpers.ringOut(to, from, callerId, hasPrompt,
-//                        new Callback() {
-//                            @Override
-//                            public void onFailure(Request request, IOException e) {
-//                                e.printStackTrace();
-//                            }
-//
-//                            @Override
-//                            public void onResponse(Response response) throws IOException {
-//                                Transaction transaction = new Transaction(response);
-//                                String responseString = transaction.getBodyString();
-//                                // If HTTP response is not successful, throw exception
-//                                if (!response.isSuccessful()) {
-//                                    try {
-//                                        JSONObject jsonObject = new JSONObject(responseString);
-//                                        String errorCode = jsonObject.getString("errorCode");
-//                                        String message = jsonObject.getString("message");
-//                                        throw new IOException("Error code: "+ transaction.response.code() + ". Error: " + errorCode + ": " + message);
-//                                    } catch (JSONException e){
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//                            }
-//                        });
+                helpers.ringout(to, from, callerId, hasPrompt,
+                        new APICallback() {
+
+                            public void onAPIFailure(Request request, IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            public void onAPIResponse(APIResponse response) throws IOException {
+
+                                String responseString = response.body().string();
+                                // If HTTP response is not successful, throw exception
+                                if (!response.ok()) {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(responseString);
+                                        String errorCode = jsonObject.getString("errorCode");
+                                        String message = jsonObject.getString("message");
+                                        throw new IOException("Error code: "+ response.statusCode() + ". Error: " + errorCode + ": " + message);
+                                    } catch (JSONException e){
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        });
                 break;
         }
     }
@@ -106,7 +119,6 @@ public class RingOutActivity extends ActionBarActivity implements View.OnClickLi
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
